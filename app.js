@@ -18,15 +18,19 @@ const requisitionMethods = {
 }
 
 const buildPath = (req, res) => {
-    let fullPath = "./views/";
+    let fullPath = "./views";
 
-    let path = req.url;
-
-    if (req.url.at(-1) === "/") {
-        path += "index.html";
+    if (req.url.includes("assets")) {
+        fullPath = ".";
     }
 
-    return fullPath + path;
+    fullPath += req.url;
+
+    if (req.url.at(-1) === "/") {
+        fullPath += "index.html";
+    }
+
+    return fullPath;
 }
 
 const readFile = (path, req, res) => {
