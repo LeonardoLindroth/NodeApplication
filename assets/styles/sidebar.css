@@ -1,0 +1,28 @@
+.sidebar {
+    flex-grow: 0;
+    flex-shrink: 1;
+    min-width: 200px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 0;
+    background-color: rgb(36, 36, 36);
+    color: #fff;
+    height: 100%;
+}
+
+.sidebar > .sidebar-item {
+    padding: 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid #fff;
+    background-color: rgb(36, 36, 36);
+}
+
+.sidebar > .sidebar-item:last-child {
+    border: none;
+}
+
+.sidebar > .sidebar-item:hover {
+    background-color: rgb(51, 51, 51);
+    cursor: pointer;
+}
