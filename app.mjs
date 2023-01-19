@@ -11,7 +11,6 @@ import routes from "./routes/routes.mjs";
 
 const pathMatchesRoutes = (urlPath) => {
     let pathRoute = urlPath.split("/");
-    console.log(pathRoute);
 
     if (pathRoute.includes("views")) {
         pathRoute = pathRoute.slice(2);
