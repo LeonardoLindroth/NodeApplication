@@ -1,0 +1,28 @@
+.vinil-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.vinil-form > .vinil-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.vinil-form > .vinil-form-group:last-child {
+    margin-bottom: 0;
+}
+
+.vinil-form > .vinil-form-group > .vinil-label {
+    font-size: 16px;
+    line-height: 16px;
+    color: rgb(36, 36, 36);
+}
+
+.vinil-form > .vinil-form-group > .vinil-input {
+    padding: 8px 16px;
+    border: 1px solid rgb(36, 36, 36);
+    border-radius: 0;
+    color: rgb(36, 36, 36);
+}
