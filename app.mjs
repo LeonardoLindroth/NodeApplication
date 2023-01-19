@@ -1,20 +1,26 @@
-const http = require("node:http");
-const fs = require("node:fs");
-const { hostname } = require("node:os");
+import http from "node:http";
+import fs from "node:fs";
+import { hostname } from "node:os";
 
 const port = "3000";
 
-const MIMETypes = {
-    "txt": "text/plain",
-    "html": "text/html",
-    "css": "text/css",
-    "js": "text/javascript",
-    "default": "application/octet-stream"
-}
+import { MIMETypes } from "./helpers/mimeTypes.mjs";
+import { requisitionMethods } from "./helpers/requisitionMethods.mjs";
 
-const requisitionMethods = {
-    get: "GET",
-    post: "POST"
+import routes from "./routes/routes.mjs";
+
+const pathMatchesRoutes = (urlPath) => {
+    let pathRoute = urlPath.split("/");
+    console.log(pathRoute);
+
+    if (pathRoute.includes("views")) {
+        pathRoute = pathRoute.slice(2);
+
+        return routes.includes(pathRoute.join("/"));
+    }
+
+    return false;
+    
 }
 
 const buildObjectData = (uriString) => {
@@ -40,6 +46,8 @@ const buildPath = (urlPath) => {
 
     if (urlPath.at(-1) === "/") {
         fullPath += "index.html";
+    } else if (pathMatchesRoutes(fullPath)) {
+        fullPath += "/index.html";
     }
 
     return fullPath;
