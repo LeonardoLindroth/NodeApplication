@@ -17,16 +17,28 @@ const requisitionMethods = {
     post: "POST"
 }
 
-const buildPath = (req, res) => {
+const buildObjectData = (uriString) => {
+    let objectData = {};
+
+    uriString.forEach((data) => {
+        let pairKeyValue = decodeURIComponent(data).split("=");
+
+        objectData[pairKeyValue[0]] = pairKeyValue[1];
+    });
+
+    return objectData;
+}
+
+const buildPath = (urlPath) => {
     let fullPath = "./views";
 
-    if (req.url.includes("assets")) {
+    if (urlPath.includes("assets")) {
         fullPath = ".";
     }
 
-    fullPath += req.url;
+    fullPath += urlPath;
 
-    if (req.url.at(-1) === "/") {
+    if (urlPath.at(-1) === "/") {
         fullPath += "index.html";
     }
 
@@ -52,13 +64,36 @@ const readFile = (path, req, res) => {
 }
 
 const server = http.createServer((req, res) => {
+    let bodyData = "";
+
+    req.on("data", (chunk) => {
+        bodyData += chunk.toString();
+    });
+
+    req.on("end", () => {
+        bodyData = bodyData.split("&");
+
+        let objectData = buildObjectData(bodyData);
+    });
+
+    let url = req.url;
+
+    if (req.url.includes("?")) {
+        const splittedUrl = req.url.split("?");
+        url = splittedUrl[0];
+
+        let params = splittedUrl[1];
+
+        let objectData = buildObjectData(params.split("&"));
+    }
+
     if (req.method === requisitionMethods.get) {
-        if (req.url.includes("..")) {
-            res.writeHead(400, {"Content-type": "text/plain"});
-            res.write("Error 400: Bad Request");
+        if (url.includes("..")) {
+            res.writeHead(403, {"Content-type": "text/plain"});
+            res.write("Error 403: Forbiden error");
             res.end();
         } else {
-            readFile(buildPath(req, res), req, res);
+            readFile(buildPath(url), req, res);
         }
     }
 });
