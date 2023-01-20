@@ -1,0 +1,37 @@
+.vinil-list {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(36, 36, 36);
+}
+
+.vinil-list > .vinil-list-header {
+    display: grid;
+    grid-template-columns:  200px 50px 100px;
+    gap: 8px;
+    border-collapse: collapse;
+    border: 1px solid #fff;
+}
+
+.vinil-list > .vinil-list-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.vinil-list > .vinil-list-body > .vinil-list-row {
+    display: grid;
+    grid-template-columns:  200px 50px 100px;
+    gap: 8px;
+    border-collapse: collapse;
+    border: 1px solid #fff;
+}
+
+.vinil-list span {
+    display: block;
+    color: #fff;
+    font-size: 16px;
+    padding: 4px 8px;
+}
+
+.vinil-list > .vinil-list-header > span {
+    font-weight: 700;
+}

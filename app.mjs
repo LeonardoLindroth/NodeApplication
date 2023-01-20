@@ -6,48 +6,32 @@ const port = "3000";
 
 import { MIMETypes } from "./helpers/mimeTypes.mjs";
 import { requisitionMethods } from "./helpers/requisitionMethods.mjs";
+import { buildObjectData } from "./helpers/buildObjectData.mjs";
 
 import routes from "./routes/routes.mjs";
 
-const pathMatchesRoutes = (urlPath) => {
+const pathMatchesDefaultRoute = (urlPath) => {
     let pathRoute = urlPath.split("/");
 
-    if (pathRoute.includes("views")) {
-        pathRoute = pathRoute.slice(2);
+    pathRoute = pathRoute.slice(2);
 
-        return routes.includes(pathRoute.join("/"));
-    }
-
-    return false;
-    
-}
-
-const buildObjectData = (uriString) => {
-    let objectData = {};
-
-    uriString.forEach((data) => {
-        let pairKeyValue = decodeURIComponent(data).split("=");
-
-        objectData[pairKeyValue[0]] = pairKeyValue[1];
-    });
-
-    return objectData;
+    return routes.includes(pathRoute.join("/"));
 }
 
 const buildPath = (urlPath) => {
-    let fullPath = "./views";
+    if (urlPath.includes("assets")) return "." + urlPath;
 
-    if (urlPath.includes("assets")) {
-        fullPath = ".";
+    let fullPath = "./views" + urlPath;
+
+    if (pathMatchesDefaultRoute(fullPath)) {
+        fullPath += "/";
     }
 
-    fullPath += urlPath;
-
-    if (urlPath.at(-1) === "/") {
-        fullPath += "index.html";
-    } else if (pathMatchesRoutes(fullPath)) {
-        fullPath += "/index.html";
+    if (fullPath.at(-1) === "/") {
+        fullPath += "index";
     }
+
+    fullPath += ".html";
 
     return fullPath;
 }
