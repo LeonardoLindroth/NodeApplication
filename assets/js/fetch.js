@@ -15,7 +15,7 @@ document.querySelector(".vinil-form-button").addEventListener("click", (e) => {
             alert(data.message);
 
             setTimeout(() => {
-                window.location.href = "/user";
+                window.location.href = "/user/list.tl";
             }, 1000);
         }
     });
