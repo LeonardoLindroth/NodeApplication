@@ -31,7 +31,9 @@ const buildPath = (urlPath) => {
         fullPath += "index";
     }
 
-    fullPath += ".html";
+    if (!fullPath.includes(".tl")) {
+        fullPath += ".html";
+    }
 
     return fullPath;
 }
@@ -78,22 +80,67 @@ const handlePost = (req, res) => {
     });
 }
 
-const readFile = (path, req, res) => {
-    fs.readFile(path, (error, data) => {
-        if (error) {
-            res.writeHead(404, {"Content-Type": "text/plain"})
-            res.write("Error 404: Not Found");
-            res.end();
-        } else {
-            let ext = path.split(".").at(-1);
+const renderContentEngine = (path, req, res) => {
+    if (path.includes(".tl")) {
+        const file = fs.readFileSync(path);
+
+        const fileString = file.toString();
+
+        console.log(file);
+        console.log(fileString);
+
+        let buffer = fs.readFileSync("./app.json");
+
+        let json = JSON.parse(buffer.toString());
+
+        let stringSplit = fileString.split("+");
+
+        if (stringSplit[1].includes("each")) {
+            let iterator = stringSplit[1].trim().split(" ");
+
+            let buildEach = "";
+
+            json[iterator[1]].forEach((user) => {
+                let properties = stringSplit[2].split("|");
+
+                properties[1] = user[properties[1].trim()];
+
+                properties[3] = user[properties[3].trim()];
+
+                properties[5] = user[properties[5].trim()];
+
+                buildEach += properties.join("");
+            });
+
+            console.log(buildEach);
+
+            let finalString = stringSplit[0] +""+ buildEach +""+ stringSplit[4];
+
+            let bufferData = Buffer.from(finalString);
 
             res.writeHead(200, 
-                {"Content-Type": ext in MIMETypes ? MIMETypes[ext] : MIMETypes["default"]}
+                {"Content-Type": MIMETypes["html"]}
             );
-            res.write(data);
+            res.write(bufferData);
             res.end();
         }
-    });
+    } else {
+        fs.readFile(path, (error, data) => {
+            if (error) {
+                res.writeHead(404, {"Content-Type": "text/plain"})
+                res.write("Error 404: Not Found");
+                res.end();
+            } else {
+                let ext = path.split(".").at(-1);
+
+                res.writeHead(200, 
+                    {"Content-Type": ext in MIMETypes ? MIMETypes[ext] : MIMETypes["default"]}
+                );
+                res.write(data);
+                res.end();
+            }
+        });
+    }
 }
 
 const server = http.createServer((req, res) => {
@@ -117,7 +164,7 @@ const server = http.createServer((req, res) => {
                 res.write("Error 403: Forbiden error");
                 res.end();
             } else {
-                readFile(buildPath(url), req, res);
+                renderContentEngine(buildPath(url), req, res);
             }
         }
     }
