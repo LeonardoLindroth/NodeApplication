@@ -1,3 +1,5 @@
+import querystring from "querystring";
+
 const buildObjectData = (uriString) => {
     let objectData = {};
 
@@ -10,4 +12,8 @@ const buildObjectData = (uriString) => {
     return objectData;
 }
 
-export { buildObjectData };
+const parseData = (uriString) => {
+    return querystring.parse(uriString);
+}
+
+export { buildObjectData, parseData };
