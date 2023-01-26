@@ -34,7 +34,9 @@ const saveData = (addingData, req, res) => {
 
     let url = req.url.split("/");
 
-    savedDataJSON[url[1]].push(addingData);
+    let id = savedDataJSON[url[1]+"s"].length;
+
+    savedDataJSON[url[1]+"s"].push(Object.assign({"id": id}, addingData));
 
     let insertData = JSON.stringify(savedDataJSON);
 
@@ -82,9 +84,9 @@ const handlePost = (req, res) => {
     });
 }
 
-const render = (path, req, res) => {
+const render = (path, req, res, params) => {
     if (path.includes(".tl")) {
-        let bufferTLString = TLRenderEngine(path);
+        let bufferTLString = TLRenderEngine(path, params);
 
         res.writeHead(200, 
             {"Content-Type": MIMETypes["html"]}
@@ -115,14 +117,15 @@ const server = http.createServer((req, res) => {
         handlePost(req, res);
     } else {
         let url = req.url;
+        let params;
 
         if (req.url.includes("?")) {
             const splittedUrl = req.url.split("?");
             url = splittedUrl[0];
 
-            let params = splittedUrl[1];
+            let urlParams = splittedUrl[1];
 
-            let objectData = buildObjectData(params.split("&"));
+            params = buildObjectData(urlParams.split("&"));
         }
 
         if (req.method === requisitionMethods.get) {
@@ -131,7 +134,7 @@ const server = http.createServer((req, res) => {
                 res.write("Error 403: Forbiden error");
                 res.end();
             } else {
-                render(buildPath(url), req, res);
+                render(buildPath(url), req, res, params);
             }
         }
     }

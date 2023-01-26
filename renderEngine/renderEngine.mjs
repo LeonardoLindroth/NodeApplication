@@ -3,7 +3,7 @@ import fs from "node:fs";
 import { commandsObject } from "./commandsObject.mjs";
 import { getSavedData } from "../helpers/getSavedData.mjs";
 
-const TLRenderEngine = (path) => {
+const TLRenderEngine = (path, params) => {
     const file = fs.readFileSync(path);
 
     const fileString = file.toString();
@@ -29,7 +29,7 @@ const TLRenderEngine = (path) => {
                     if (closeTLCommand === command.closeCommand) {
                         insideCommandContentIndex = i + 1;
                         let insideCommandContent = TLOperatorFileSplit[insideCommandContentIndex];
-                        TLRenderedString += TLRenderData(instruction, insideCommandContent);
+                        TLRenderedString += TLRenderData(instruction, insideCommandContent, params);
                     }
                 } else {
                     TLRenderedString += TLRenderTemplate(instruction);
@@ -45,12 +45,17 @@ const TLRenderEngine = (path) => {
     return Buffer.from(TLRenderedString);
 }
 
-const TLRenderData = (iterableVar, insideContent) => {
+const TLRenderData = (iterableVar, insideContent, params) => {
     let savedDataJSON = getSavedData();
 
     let TLRenderedString = "";
 
     savedDataJSON[iterableVar].forEach((item) => {
+        if (params && params.id && (parseInt(params.id, 10) != item.id)) {
+            TLRenderedString += "";
+            return;
+        }
+
         let itemProperties = insideContent.split("|");
 
         itemProperties = itemProperties.map((itemProperty, i) => {
