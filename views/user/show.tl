@@ -25,6 +25,8 @@
                         <section class="vinil-show">
                             <form class="vinil-form js-user-update-form" method="POST" data-url="/user/update" data-redirect="/user/list">
                                 + insert users +
+                                    <input name="id" value="| id |" type="hidden" class="vinil-form-input"/>
+
                                     <section class="vinil-form-group">
                                         <label class="vinil-form-label">Name</label>
                                         <input name="name" value="| name |" class="vinil-form-input" disabled/>
