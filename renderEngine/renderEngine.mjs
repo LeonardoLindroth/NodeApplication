@@ -1,6 +1,6 @@
 import fs from "node:fs";
 
-import { commandsMap } from "./commandsMap.mjs";
+import { commandsObject } from "./commandsObject.mjs";
 import { getSavedData } from "../helpers/getSavedData.mjs";
 
 const TLRenderEngine = (path) => {
@@ -20,13 +20,19 @@ const TLRenderEngine = (path) => {
             let TLCommand = TLCommandSplit[0];
             let instruction = TLCommandSplit[1];
 
-            if (commandsMap.includes(TLCommand)) {
-                let closeTLCommand = TLOperatorFileSplit[i + 2].trim();
+            let command = TLCommand in commandsObject ? commandsObject[TLCommand] : false;
 
-                if (closeTLCommand === ("/" + TLCommand)) {
-                    insideCommandContentIndex = i + 1;
-                    let insideCommandContent = TLOperatorFileSplit[insideCommandContentIndex];
-                    TLRenderedString += TLRenderData(instruction, insideCommandContent);
+            if (command) {
+                if (command.closeCommand) {
+                    let closeTLCommand = TLOperatorFileSplit[i + 2].trim();
+
+                    if (closeTLCommand === command.closeCommand) {
+                        insideCommandContentIndex = i + 1;
+                        let insideCommandContent = TLOperatorFileSplit[insideCommandContentIndex];
+                        TLRenderedString += TLRenderData(instruction, insideCommandContent);
+                    }
+                } else {
+                    TLRenderedString += TLRenderTemplate(instruction);
                 }
             }
         } else if(i === insideCommandContentIndex) {
@@ -59,6 +65,12 @@ const TLRenderData = (iterableVar, insideContent) => {
     });
 
     return TLRenderedString;
+}
+
+const TLRenderTemplate = (path) => {
+    const file = fs.readFileSync(path);
+
+    return file.toString();
 }
 
 const isTLCommand = (i) => {
