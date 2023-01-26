@@ -35,7 +35,7 @@
                             </section>
                             <section class="vinil-list-body">
                                 + each users +
-                                    <section class="vinil-list-row">
+                                    <section class="vinil-list-row" data-url="/user/show?id=| id |">
                                         <span>
                                             | name |
                                         </span>
@@ -56,5 +56,6 @@
 
         <script src="/assets/js/main.js"></script>
         <script src="/assets/js/sidebar.js"></script>
+        <script src="/assets/js/user/list.js"></script>
     </body>
 </html>
