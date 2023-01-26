@@ -7,52 +7,47 @@ const port = "3000";
 import { MIMETypes } from "./helpers/mimeTypes.mjs";
 import { requisitionMethods } from "./helpers/requisitionMethods.mjs";
 import { buildObjectData } from "./helpers/buildObjectData.mjs";
+import { getSavedData } from "./helpers/getSavedData.mjs";
 
-import routes from "./routes/routes.mjs";
+import { TLRenderEngine } from "./renderEngine/renderEngine.mjs";
 
-const pathMatchesDefaultRoute = (urlPath) => {
-    let pathRoute = urlPath.split("/");
-
-    pathRoute = pathRoute.slice(2);
-
-    return routes.includes(pathRoute.join("/"));
-}
+import { Routes } from "./routes/routes.mjs";
 
 const buildPath = (urlPath) => {
     if (urlPath.includes("assets")) return "." + urlPath;
 
+    if (urlPath === "/") return "./views/index.tl";
+
     let fullPath = "./views" + urlPath;
 
-    if (pathMatchesDefaultRoute(fullPath)) {
-        fullPath += "/";
-    }
+    const routes = new Routes(urlPath);
 
-    if (fullPath.at(-1) === "/") {
-        fullPath += "index";
-    }
-
-    if (!fullPath.includes(".tl")) {
-        fullPath += ".html";
+    if (routes.matches()) {
+        fullPath += ".tl";
     }
 
     return fullPath;
 }
 
-const saveData = (data, req, res) => {
-    let buffer = fs.readFileSync("./app.json");
+const saveData = (addingData, req, res) => {
+    let savedDataJSON = getSavedData();
 
-    let json = JSON.parse(buffer.toString());
+    let url = req.url.split("/");
 
-    json["users"].push(data);
+    savedDataJSON[url[1]].push(addingData);
 
-    let insertData = JSON.stringify(json);
+    let insertData = JSON.stringify(savedDataJSON);
 
     fs.writeFile("./app.json", insertData, (error) => {
-        if (error) throw error;
-
-        res.writeHead(200, {"Content-Type": "application/json"});
-        res.write(JSON.stringify({success: true, message: "Valor salvo!"}));
-        res.end();
+        if (error) {
+            res.writeHead(404, {"Content-Type": "application/json"});
+            res.write(JSON.stringify({ success: false, message: "Erro" }));
+            res.end();
+        } else {
+            res.writeHead(200, {"Content-Type": "application/json"});
+            res.write(JSON.stringify({ success: true, message: "Valor salvo!" }));
+            res.end();
+        }
     })
 }
 
@@ -71,59 +66,31 @@ const handlePost = (req, res) => {
 
     req.on("end", () => {
         bodyData = bodyData.split("&");
-
         let objectData = buildObjectData(bodyData);
+        let url = req.url.split("/");
 
-        console.log(req.url);
-
-        saveData(objectData, req, res);
+        switch(url[2]) {
+            case "add":
+                saveData(objectData, req, res);
+            case "update":
+                // updateData
+            case "delete":
+                // deleteData
+            case "default":
+                return;
+        }
     });
 }
 
-const renderContentEngine = (path, req, res) => {
+const render = (path, req, res) => {
     if (path.includes(".tl")) {
-        const file = fs.readFileSync(path);
+        let bufferTLString = TLRenderEngine(path);
 
-        const fileString = file.toString();
-
-        console.log(file);
-        console.log(fileString);
-
-        let buffer = fs.readFileSync("./app.json");
-
-        let json = JSON.parse(buffer.toString());
-
-        let stringSplit = fileString.split("+");
-
-        if (stringSplit[1].includes("each")) {
-            let iterator = stringSplit[1].trim().split(" ");
-
-            let buildEach = "";
-
-            json[iterator[1]].forEach((user) => {
-                let properties = stringSplit[2].split("|");
-
-                properties[1] = user[properties[1].trim()];
-
-                properties[3] = user[properties[3].trim()];
-
-                properties[5] = user[properties[5].trim()];
-
-                buildEach += properties.join("");
-            });
-
-            console.log(buildEach);
-
-            let finalString = stringSplit[0] +""+ buildEach +""+ stringSplit[4];
-
-            let bufferData = Buffer.from(finalString);
-
-            res.writeHead(200, 
-                {"Content-Type": MIMETypes["html"]}
-            );
-            res.write(bufferData);
-            res.end();
-        }
+        res.writeHead(200, 
+            {"Content-Type": MIMETypes["html"]}
+        );
+        res.write(bufferTLString);
+        res.end();
     } else {
         fs.readFile(path, (error, data) => {
             if (error) {
@@ -164,7 +131,7 @@ const server = http.createServer((req, res) => {
                 res.write("Error 403: Forbiden error");
                 res.end();
             } else {
-                renderContentEngine(buildPath(url), req, res);
+                render(buildPath(url), req, res);
             }
         }
     }

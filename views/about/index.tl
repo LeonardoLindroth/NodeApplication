@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Node App</title>
+        <title>About</title>
         <link href="/assets/styles/main.css" type="text/css" rel="stylesheet"/>
         <link href="/assets/styles/sidebar.css" type="text/css" rel="stylesheet"/>
     </head>
@@ -12,17 +12,17 @@
                     <span>Home</span>
                 </section>
 
-                <section class="sidebar-item" data-url="/user">
+                <section class="sidebar-item" data-url="/user/list">
                     <span>User</span>
                 </section>
 
-                <section class="sidebar-item" data-url="/about">
+                <section class="sidebar-item" data-url="/about/index">
                     <span>About</span>
                 </section>
             </nav>
 
             <main>
-                <h1>Node app</h1>
+                <h1>About</h1>
             </main>
         </section>
 

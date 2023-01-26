@@ -14,11 +14,11 @@
                     <span>Home</span>
                 </section>
 
-                <section class="sidebar-item" data-url="/user">
+                <section class="sidebar-item" data-url="/user/list">
                     <span>User</span>
                 </section>
 
-                <section class="sidebar-item" data-url="/about">
+                <section class="sidebar-item" data-url="/about/index">
                     <span>About</span>
                 </section>
             </nav>
