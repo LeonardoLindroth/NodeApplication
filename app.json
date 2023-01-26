@@ -1,1 +1,34 @@
-{"users":[{"name":"Leo","age":"22","hairColor":"Brown"},{"name":"Bruno","age":"27","hairColor":"Green"},{"name":"Thalia","age":"25","hairColor":"Black"}]}
+{
+    "users": [
+        {
+            "id": 0,
+            "name": "Leo",
+            "age": "22",
+            "hairColor": "Brown"
+        },
+        {
+            "id": 1,
+            "name": "Bruninha",
+            "age": "50",
+            "hairColor": "Yellow"
+        },
+        {
+            "id": 2,
+            "name": "Thalia",
+            "age": "25",
+            "hairColor": "Black"
+        },
+        {
+            "id": 3,
+            "name": "YuriGagarin",
+            "age": "35",
+            "hairColor": "Yellow"
+        },
+        {
+            "id": 4,
+            "name": "Lucas",
+            "age": "11",
+            "hairColor": "Black"
+        }
+    ]
+}

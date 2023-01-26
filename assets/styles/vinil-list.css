@@ -25,6 +25,11 @@
     border: 1px solid #fff;
 }
 
+.vinil-list > .vinil-list-body > .vinil-list-row:hover {
+    background-color: rgb(51, 51, 51);
+    cursor: pointer;
+}
+
 .vinil-list span {
     display: block;
     color: #fff;

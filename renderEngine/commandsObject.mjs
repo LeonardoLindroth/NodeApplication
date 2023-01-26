@@ -4,6 +4,9 @@ const commandsObject = {
     },
     "render": {
         closeCommand: false
+    },
+    "insert": {
+        closeCommand: "/insert"
     }
 }
 

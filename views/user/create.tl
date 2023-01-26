@@ -20,7 +20,7 @@
                     </section>
 
                     <section class="vinil-pane-content">
-                        <form class="vinil-form" method="POST">
+                        <form class="vinil-form js-create-user-form" method="POST" data-url="/user/add" data-redirect="/user/list">
                             <section class="vinil-form-group">
                                 <label class="vinil-form-label">Name</label>
                                 <input name="name" class="vinil-form-input"/>
@@ -50,6 +50,7 @@
 
         <script src="/assets/js/main.js"></script>
         <script src="/assets/js/sidebar.js"></script>
-        <script src="/assets/js/fetch.js"></script>
+        <script src="/assets/js/request.js"></script>
+        <script src="/assets/js/user/create.js"></script>
     </body>
 </html>
