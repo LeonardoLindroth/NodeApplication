@@ -18,11 +18,18 @@
                 <section class="vinil-pane">
                     <section class="vinil-pane-header">
                         <h2 class="vinil-pane-title">User Show</h2>
-                        <a class="vinil-pane-button">Edit</a>
+                        <a class="vinil-pane-button js-edit-user-button">Edit</a>
+                        <a class="vinil-pane-button vinil-pane-button-danger js-delete-user-button">Delete</a>
                     </section>
 
                     <section class="vinil-pane-content">
                         <section class="vinil-show">
+                            <form class="vinil-form js-delete-user-form" style="display: none" method="POST" data-url="/user/delete" data-redirect="/user/list">
+                                + insert users +
+                                    <input name="id" value="| id |" type="hidden" class="vinil-form-input"/>
+                                + /insert +
+                            </form>
+
                             <form class="vinil-form js-user-update-form" method="POST" data-url="/user/update" data-redirect="/user/list">
                                 + insert users +
                                     <input name="id" value="| id |" type="hidden" class="vinil-form-input"/>

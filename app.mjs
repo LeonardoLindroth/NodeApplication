@@ -7,9 +7,10 @@ const port = "3000";
 import { MIMETypes } from "./helpers/mimeTypes.mjs";
 import { requisitionMethods } from "./helpers/requisitionMethods.mjs";
 import { buildObjectData } from "./helpers/buildObjectData.mjs";
-import { getSavedData } from "./helpers/getSavedData.mjs";
 
 import { TLRenderEngine } from "./renderEngine/renderEngine.mjs";
+
+import { saveData, updateData, deleteData } from "./services/postServices.mjs";
 
 import { Routes } from "./routes/routes.mjs";
 
@@ -27,59 +28,6 @@ const buildPath = (urlPath) => {
     }
 
     return fullPath;
-}
-
-const saveData = (addingData, req, res) => {
-    let savedDataJSON = getSavedData();
-
-    let url = req.url.split("/");
-
-    let id = savedDataJSON[url[1]+"s"].length;
-
-    savedDataJSON[url[1]+"s"].push(Object.assign({"id": id}, addingData));
-
-    let insertData = JSON.stringify(savedDataJSON);
-
-    fs.writeFile("./app.json", insertData, (error) => {
-        if (error) {
-            res.writeHead(404, {"Content-Type": "application/json"});
-            res.write(JSON.stringify({ success: false, message: "Erro" }));
-            res.end();
-        } else {
-            res.writeHead(200, {"Content-Type": "application/json"});
-            res.write(JSON.stringify({ success: true, message: "Valor salvo!" }));
-            res.end();
-        }
-    })
-}
-
-const updateData = (updatingData, req, res) => {
-    let savedDataJSON = getSavedData();
-
-    let url = req.url.split("/");
-
-    savedDataJSON[url[1]+"s"] = savedDataJSON[url[1]+"s"].map((item) => {
-        if (item.id === parseInt(updatingData.id, 10)) {
-            updatingData.id = parseInt(updatingData.id, 10);
-            return updatingData;
-        }
-
-        return item;
-    });
-
-    let insertData = JSON.stringify(savedDataJSON);
-
-    fs.writeFile("./app.json", insertData, (error) => {
-        if (error) {
-            res.writeHead(404, {"Content-Type": "application/json"});
-            res.write(JSON.stringify({ success: false, message: "Erro" }));
-            res.end();
-        } else {
-            res.writeHead(200, {"Content-Type": "application/json"});
-            res.write(JSON.stringify({ success: true, message: "Valor atualizado!" }));
-            res.end();
-        }
-    })
 }
 
 const handlePost = (req, res) => {
@@ -103,12 +51,15 @@ const handlePost = (req, res) => {
         switch(url[2]) {
             case "add":
                 saveData(objectData, req, res);
+                break;
             case "update":
                 updateData(objectData, req, res);
+                break;
             case "delete":
-                // deleteData
+                deleteData(objectData, req, res);
+                break;
             case "default":
-                return;
+                break;
         }
     });
 }
