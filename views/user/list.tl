@@ -34,16 +34,16 @@
                                 </span>
                             </section>
                             <section class="vinil-list-body">
-                                + each users +
-                                    <section class="vinil-list-row" data-url="/user/show?id=| id |">
+                                + each user in users +
+                                    <section class="vinil-list-row" data-url="/user/show?id=| user.id |">
                                         <span>
-                                            | name |
+                                            | user.name |
                                         </span>
                                         <span>
-                                            | age |
+                                            | user.age |
                                         </span>
                                         <span>
-                                            | hairColor |
+                                            | user.hairColor |
                                         </span>
                                     </section>
                                 + /each +
