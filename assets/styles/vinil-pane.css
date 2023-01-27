@@ -5,6 +5,7 @@
     padding: 32px;
     display: flex;
     flex-direction: column;
+    min-width: 255px;
 }
 
 .vinil-pane > .vinil-pane-header {
@@ -34,6 +35,10 @@
     margin: 0;
     padding: 4px 8px;
     text-decoration: none;
+}
+
+.vinil-pane > .vinil-pane-header > .vinil-pane-button.vinil-pane-button-danger {
+    background-color: rgb(209, 0, 0);
 }
 
 .vinil-pane > .vinil-pane-header > .vinil-pane-button:hover {
