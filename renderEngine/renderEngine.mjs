@@ -15,24 +15,25 @@ const TLRenderEngine = (path, params) => {
 
     TLOperatorFileSplit.forEach((fileChunk, i) => {        
         if(isTLCommand(i)) {
-            let TLCommandSplit = fileChunk.trim().split(" ");
+            const TLCommandSplit = fileChunk.trim().split(" ");
 
-            let TLCommand = TLCommandSplit[0];
-            let instruction = TLCommandSplit[1];
+            const TLCommand = TLCommandSplit[0];
 
-            let command = TLCommand in commandsObject ? commandsObject[TLCommand] : false;
+            const instructions = TLCommandSplit.slice(1);
+
+            const command = TLCommand in commandsObject ? commandsObject[TLCommand] : false;
 
             if (command) {
                 if (command.closeCommand) {
-                    let closeTLCommand = TLOperatorFileSplit[i + 2].trim();
+                    const closeTLCommand = TLOperatorFileSplit[i + 2].trim();
 
                     if (closeTLCommand === command.closeCommand) {
                         insideCommandContentIndex = i + 1;
-                        let insideCommandContent = TLOperatorFileSplit[insideCommandContentIndex];
-                        TLRenderedString += TLRenderData(instruction, insideCommandContent, params);
+                        const insideCommandContent = TLOperatorFileSplit[insideCommandContentIndex];
+                        TLRenderedString += TLRenderData(TLCommand, instructions, insideCommandContent, params);
                     }
                 } else {
-                    TLRenderedString += TLRenderTemplate(instruction);
+                    TLRenderedString += TLRenderTemplate(instructions);
                 }
             }
         } else if(i === insideCommandContentIndex) {
@@ -45,40 +46,71 @@ const TLRenderEngine = (path, params) => {
     return Buffer.from(TLRenderedString);
 }
 
-const TLRenderData = (iterableVar, insideContent, params) => {
+const TLRenderData = (command, instructions, insideContent, params) => {
     let savedDataJSON = getSavedData();
 
     let TLRenderedString = "";
 
-    savedDataJSON[iterableVar].forEach((item) => {
-        if (item.deleted) {
-            TLRenderedString += "";
-            return;
-        }
+    if (command === "each") {
+        TLRenderedString += TLRenderEach(savedDataJSON, instructions[0], insideContent, params);
+    } else if (command === "insert") {
+        TLRenderedString += TLRenderInsert(savedDataJSON, instructions[0], insideContent, params);
+    }
 
-        if (params && params.id && (parseInt(params.id, 10) != item.id)) {
-            TLRenderedString += "";
-            return;
-        }
+    return TLRenderedString;
+}
 
-        let itemProperties = insideContent.split("|");
+const TLRenderEach = (savedData, context, content, params) => {
+    if (!(context in savedData)) {
+        return "";
+    }
 
-        itemProperties = itemProperties.map((itemProperty, i) => {
-            if ((i % 2) != 0) {
-                return item[itemProperty.trim()];
-            }
-
-            return itemProperty.trim();
-        });
-
-        TLRenderedString += itemProperties.join("");
+    let TLRenderedString = "";
+    
+    savedData[context].filter((item) => {
+        return !item.deleted;
+    }).forEach((item) => {
+        TLRenderedString += TLRenderProperties(context, item, content);
     });
 
     return TLRenderedString;
 }
 
-const TLRenderTemplate = (path) => {
-    const file = fs.readFileSync(path);
+const TLRenderInsert = (savedData, context, content, params) => {
+    if (!(context in savedData)) throw new Error("Error");
+
+    let TLRenderedString = "";
+
+    if (params && params.id) {
+        let insertData = savedData[context].filter((item) => { 
+            return (parseInt(params.id, 10) === item.id)
+        });
+
+        if (insertData.deleted) throw new Error("Cannot be acessed");
+
+        TLRenderedString += TLRenderProperties(context, insertData[0], content);
+    }
+
+    return TLRenderedString;
+}
+
+const TLRenderProperties = (context, item, content) => {
+    let itemProperties = content.split("|");
+
+    itemProperties = itemProperties.map((itemProperty, i) => {
+        if ((i % 2) != 0) {
+            const property = itemProperty.replace(context + ".", "").trim();
+            return item[property];
+        }
+
+        return itemProperty.trim();
+    });
+
+    return itemProperties.join("");
+}
+
+const TLRenderTemplate = (instructions) => {
+    const file = fs.readFileSync(instructions[0]);
 
     return file.toString();
 }
