@@ -51,6 +51,11 @@ const TLRenderData = (iterableVar, insideContent, params) => {
     let TLRenderedString = "";
 
     savedDataJSON[iterableVar].forEach((item) => {
+        if (item.deleted) {
+            TLRenderedString += "";
+            return;
+        }
+
         if (params && params.id && (parseInt(params.id, 10) != item.id)) {
             TLRenderedString += "";
             return;
