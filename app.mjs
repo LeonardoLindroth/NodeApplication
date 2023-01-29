@@ -45,18 +45,21 @@ const handlePost = (req, res) => {
 
     req.on("end", () => {
         bodyData = bodyData.split("&");
-        let objectData = buildObjectData(bodyData);
-        let url = req.url.split("/");
+        const objectData = buildObjectData(bodyData);
 
-        switch(url[2]) {
+        const url = req.url.split("/");
+        const context = url[1];
+        const action = url[2];
+
+        switch(action) {
             case "add":
-                saveData(objectData, req, res);
+                saveData(objectData, context, res);
                 break;
             case "update":
-                updateData(objectData, req, res);
+                updateData(objectData, context, res);
                 break;
             case "delete":
-                deleteData(objectData, req, res);
+                deleteData(objectData, context, res);
                 break;
             case "default":
                 break;

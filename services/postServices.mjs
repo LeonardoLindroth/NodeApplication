@@ -2,38 +2,26 @@ import fs from "node:fs";
 
 import { getSavedData } from "../helpers/getSavedData.mjs";
 
-const saveData = (addingData, req, res) => {
+const saveData = (addingData, context, res) => {
     let savedDataJSON = getSavedData();
 
-    let url = req.url.split("/");
+    if (!(context in savedDataJSON)) {
+        savedDataJSON = Object.assign(savedDataJSON, {[context]: []});
+    }
 
-    let id = savedDataJSON[url[1]+"s"].length;
+    const newId = savedDataJSON[context].length;
 
-    addingData = Object.assign(addingData, {"id": id, "deleted": 0});
+    addingData = Object.assign(addingData, {"id": newId, "deleted": 0});
 
-    savedDataJSON[url[1]+"s"].push(addingData);
+    savedDataJSON[context].push(addingData);
 
-    let insertData = JSON.stringify(savedDataJSON);
-
-    fs.writeFile("./app.json", insertData, (error) => {
-        if (error) {
-            res.writeHead(404, {"Content-Type": "application/json"});
-            res.write(JSON.stringify({ success: false, message: "Erro" }));
-            res.end();
-        } else {
-            res.writeHead(200, {"Content-Type": "application/json"});
-            res.write(JSON.stringify({ success: true, message: "Valor salvo!" }));
-            res.end();
-        }
-    })
+    manageAppData(savedDataJSON, "Saved with success", res);
 }
 
-const updateData = (updatingData, req, res) => {
+const updateData = (updatingData, context, res) => {
     let savedDataJSON = getSavedData();
 
-    let url = req.url.split("/");
-
-    savedDataJSON[url[1]+"s"] = savedDataJSON[url[1]+"s"].map((item) => {
+    savedDataJSON[context] = savedDataJSON[context].map((item) => {
         if (item.id === parseInt(updatingData.id, 10)) {
             updatingData.id = parseInt(updatingData.id, 10);
             updatingData = Object.assign(updatingData, {"deleted": 0});
@@ -43,27 +31,13 @@ const updateData = (updatingData, req, res) => {
         return item;
     });
 
-    let insertData = JSON.stringify(savedDataJSON);
-
-    fs.writeFile("./app.json", insertData, (error) => {
-        if (error) {
-            res.writeHead(404, {"Content-Type": "application/json"});
-            res.write(JSON.stringify({ success: false, message: "Erro" }));
-            res.end();
-        } else {
-            res.writeHead(200, {"Content-Type": "application/json"});
-            res.write(JSON.stringify({ success: true, message: "Valor atualizado!" }));
-            res.end();
-        }
-    });
+    manageAppData(savedDataJSON, "Actualized with success", res);
 }
 
-const deleteData = (deletingData, req, res) => {
+const deleteData = (deletingData, context, res) => {
     let savedDataJSON = getSavedData();
 
-    let url = req.url.split("/");
-
-    savedDataJSON[url[1]+"s"] = savedDataJSON[url[1]+"s"].map((item) => {
+    savedDataJSON[context] = savedDataJSON[context].map((item) => {
         if (item.id === parseInt(deletingData.id, 10)) {
             item.deleted = 1;
             deletingData = Object.assign(deletingData, item);
@@ -74,16 +48,20 @@ const deleteData = (deletingData, req, res) => {
         return item;
     });
 
-    let insertData = JSON.stringify(savedDataJSON);
+    manageAppData(savedDataJSON, "Deleted with success", res);
+}
 
-    fs.writeFile("./app.json", insertData, (error) => {
+const manageAppData = (dataJSON, message, res) => {
+    const data = JSON.stringify(dataJSON);
+
+    fs.writeFile("./app.json", data, (error) => {
         if (error) {
             res.writeHead(404, {"Content-Type": "application/json"});
             res.write(JSON.stringify({ success: false, message: "Erro" }));
             res.end();
         } else {
             res.writeHead(200, {"Content-Type": "application/json"});
-            res.write(JSON.stringify({ success: true, message: "Valor atualizado!" }));
+            res.write(JSON.stringify({ success: true, message: message }));
             res.end();
         }
     });

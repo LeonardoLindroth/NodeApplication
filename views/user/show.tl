@@ -25,28 +25,28 @@
                     <section class="vinil-pane-content">
                         <section class="vinil-show">
                             <form class="vinil-form js-delete-user-form" style="display: none" method="POST" data-url="/user/delete" data-redirect="/user/list">
-                                + insert users +
-                                    <input name="id" value="| id |" type="hidden" class="vinil-form-input"/>
+                                + insert user +
+                                    <input name="id" value="| user.id |" type="hidden" class="vinil-form-input"/>
                                 + /insert +
                             </form>
 
                             <form class="vinil-form js-user-update-form" method="POST" data-url="/user/update" data-redirect="/user/list">
-                                + insert users +
-                                    <input name="id" value="| id |" type="hidden" class="vinil-form-input"/>
+                                + insert user +
+                                    <input name="id" value="| user.id |" type="hidden" class="vinil-form-input"/>
 
                                     <section class="vinil-form-group">
                                         <label class="vinil-form-label">Name</label>
-                                        <input name="name" value="| name |" class="vinil-form-input" disabled/>
+                                        <input name="name" value="| user.name |" class="vinil-form-input" disabled/>
                                     </section>
 
                                     <section class="vinil-form-group">
                                         <label class="vinil-form-label">Age</label>
-                                        <input name="age" value="| age |" class="vinil-form-input" disabled/>
+                                        <input name="age" value="| user.age |" class="vinil-form-input" disabled/>
                                     </section>
 
                                     <section class="vinil-form-group">
                                         <label class="vinil-form-label">Hair Color</label>
-                                        <select name="hairColor" value="| hairColor |" class="vinil-form-select" disabled>
+                                        <select name="hairColor" value="| user.hairColor |" class="vinil-form-select" disabled>
                                             <option>Yellow</option>
                                             <option>Black</option>
                                             <option>Brown</option>
