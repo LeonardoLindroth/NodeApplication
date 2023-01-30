@@ -2,6 +2,11 @@ import fs from "node:fs";
 
 import { getSavedData } from "../helpers/getSavedData.mjs";
 
+import { exec } from "node:child_process";
+
+const enableFirebase = true;
+const firebaseURL = "https://nodeserver-bf6b2-default-rtdb.firebaseio.com/";
+
 const saveData = (addingData, context, res) => {
     let savedDataJSON = getSavedData();
 
@@ -53,6 +58,19 @@ const deleteData = (deletingData, context, res) => {
 
 const manageAppData = (dataJSON, message, res) => {
     const data = JSON.stringify(dataJSON);
+
+    if (enableFirebase) {
+        const url = firebaseURL + "/app.json";
+
+        exec("curl -X PUT -d '" + data + "' '" + url + "'", (error, stdout, stderr) => {
+            if (error) {
+              console.error(`exec error: ${error}`);
+              return;
+            }
+            console.log(`stdout: ${stdout}`);
+            console.error(`stderr: ${stderr}`);
+        });
+    }
 
     fs.writeFile("./app.json", data, (error) => {
         if (error) {
