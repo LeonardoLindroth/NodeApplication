@@ -1,7 +1,7 @@
 import fs from "node:fs";
 
 import { commandsObject } from "./commandsObject.mjs";
-import { getSavedData } from "../helpers/getSavedData.mjs";
+import { getData } from "../services/services.mjs";
 
 const TLRenderEngine = (path, params) => {
     const file = fs.readFileSync(path);
@@ -47,7 +47,7 @@ const TLRenderEngine = (path, params) => {
 }
 
 const TLRenderData = (command, instructions, insideContent, params) => {
-    let savedDataJSON = getSavedData();
+    let savedDataJSON = getData();
 
     let TLRenderedString = "";
 

@@ -10,7 +10,7 @@ import { buildObjectData } from "./helpers/buildObjectData.mjs";
 
 import { TLRenderEngine } from "./renderEngine/renderEngine.mjs";
 
-import { saveData, updateData, deleteData } from "./services/postServices.mjs";
+import { saveData, updateData, deleteData } from "./services/services.mjs";
 
 import { Routes } from "./routes/routes.mjs";
 
