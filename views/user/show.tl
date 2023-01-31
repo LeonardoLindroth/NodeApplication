@@ -46,11 +46,11 @@
 
                                     <section class="vinil-form-group">
                                         <label class="vinil-form-label">Hair Color</label>
-                                        <select name="hairColor" value="| user.hairColor |" class="vinil-form-select" disabled>
-                                            <option>Yellow</option>
-                                            <option>Black</option>
-                                            <option>Brown</option>
-                                            <option>White</option>
+                                        <select name="hairColor" class="vinil-form-select" disabled>
+                                            <option | user.hairColor == "Yellow" ? "selected" : "" |>Yellow</option>
+                                            <option | user.hairColor == "Black" ? "selected" : "" |>Black</option>
+                                            <option | user.hairColor == "Brown" ? "selected" : "" |>Brown</option>
+                                            <option | user.hairColor == "White" ? "selected" : "" |>White</option>
                                         </select>
                                     </section>
                                 + /insert +

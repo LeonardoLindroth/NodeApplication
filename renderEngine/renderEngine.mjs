@@ -94,19 +94,52 @@ const TLRenderInsert = (savedData, context, content, params) => {
     return TLRenderedString;
 }
 
-const TLRenderProperties = (context, item, content) => {
+const TLRenderProperties = (context, savedItem, content) => {
     let itemProperties = content.split("|");
 
     itemProperties = itemProperties.map((itemProperty, i) => {
         if ((i % 2) != 0) {
-            const property = itemProperty.replace(context + ".", "").trim();
-            return item[property];
+            const propertySplit = itemProperty.trim().split(" ");
+
+            const property = removeContextFromProperty(propertySplit[0], context);
+
+            let propertyString = "";
+
+            if (propertySplit.length > 1) {
+                const conditions = sanitizeConditions(propertySplit.slice(1));
+
+                switch(conditions[0]) {
+                    case "==":
+                        if (savedItem[property] == conditions[1]) {
+                            propertyString = " " + conditions[3];
+                        } else {
+                            propertyString = conditions[5];
+                        }
+                        break;
+                    case "default":
+                        break;
+                }
+            } else {
+                propertyString = savedItem[property];
+            }
+
+            return propertyString;
         }
 
         return itemProperty.trim();
     });
 
     return itemProperties.join("");
+}
+
+const sanitizeConditions = (conditions) => {
+    return conditions.map((condition) => {
+        return String(condition.replaceAll("\"", ""));
+    });
+}
+
+const removeContextFromProperty = (property, context) => {
+    return property.replace(context + ".", "").trim();
 }
 
 const TLRenderTemplate = (instructions) => {
