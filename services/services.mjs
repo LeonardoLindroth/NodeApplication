@@ -1,14 +1,27 @@
 import fs from "node:fs";
+import { exec, execSync } from "node:child_process";
 
-import { getSavedData } from "../helpers/getSavedData.mjs";
+import { enableFirebase, firebaseURL } from "./firebase.mjs";
 
-import { exec } from "node:child_process";
+const getData = () => {
+    let savedDataBuffer;
+    let savedDataJSON = {};
 
-const enableFirebase = true;
-const firebaseURL = "https://nodeserver-bf6b2-default-rtdb.firebaseio.com/";
+    if (enableFirebase) {
+        const url = firebaseURL + "app.json";
+
+        savedDataBuffer = execSync("curl '" + url + "?print=pretty'");
+    } else {
+        savedDataBuffer = fs.readFileSync("./app.json");
+    }
+
+    savedDataJSON = JSON.parse(savedDataBuffer.toString());
+
+    return savedDataJSON;
+}
 
 const saveData = (addingData, context, res) => {
-    let savedDataJSON = getSavedData();
+    let savedDataJSON = getData();
 
     if (!(context in savedDataJSON)) {
         savedDataJSON = Object.assign(savedDataJSON, {[context]: []});
@@ -24,7 +37,7 @@ const saveData = (addingData, context, res) => {
 }
 
 const updateData = (updatingData, context, res) => {
-    let savedDataJSON = getSavedData();
+    let savedDataJSON = getData();
 
     savedDataJSON[context] = savedDataJSON[context].map((item) => {
         if (item.id === parseInt(updatingData.id, 10)) {
@@ -40,7 +53,7 @@ const updateData = (updatingData, context, res) => {
 }
 
 const deleteData = (deletingData, context, res) => {
-    let savedDataJSON = getSavedData();
+    let savedDataJSON = getData();
 
     savedDataJSON[context] = savedDataJSON[context].map((item) => {
         if (item.id === parseInt(deletingData.id, 10)) {
@@ -60,7 +73,7 @@ const manageAppData = (dataJSON, message, res) => {
     const data = JSON.stringify(dataJSON);
 
     if (enableFirebase) {
-        const url = firebaseURL + "/app.json";
+        const url = firebaseURL + "app.json";
 
         exec("curl -X PUT -d '" + data + "' '" + url + "'", (error, stdout, stderr) => {
             if (error) {
@@ -85,4 +98,4 @@ const manageAppData = (dataJSON, message, res) => {
     });
 }
 
-export { saveData, updateData, deleteData };
+export { saveData, getData, updateData, deleteData };
