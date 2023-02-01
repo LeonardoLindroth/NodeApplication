@@ -53,6 +53,11 @@
                                             <option | user.hairColor == "White" ? "selected" : "" |>White</option>
                                         </select>
                                     </section>
+
+                                    <section class="vinil-form-group">
+                                        <label class="vinil-form-label">Deleted</label>
+                                        <input type="checkbox" class="vinil-checkbox" name="deleted" disabled | user.deleted ? "checked" : "" | />
+                                    </section>
                                 + /insert +
 
                                 <button type="submit" class="vinil-form-button" disabled>Enviar</button>
