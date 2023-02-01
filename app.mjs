@@ -8,7 +8,7 @@ import { MIMETypes } from "./helpers/mimeTypes.mjs";
 import { requisitionMethods } from "./helpers/requisitionMethods.mjs";
 import { buildObjectData } from "./helpers/buildObjectData.mjs";
 
-import { TLRenderEngine } from "./renderEngine/renderEngine.mjs";
+import { engine } from "./TLEngine/engine.mjs";
 
 import { saveData, updateData, deleteData } from "./services/services.mjs";
 
@@ -69,7 +69,7 @@ const handlePost = (req, res) => {
 
 const render = (path, req, res, params) => {
     if (path.includes(".tl")) {
-        let bufferTLString = TLRenderEngine(path, params);
+        let bufferTLString = engine(path, params);
 
         res.writeHead(200, 
             {"Content-Type": MIMETypes["html"]}
