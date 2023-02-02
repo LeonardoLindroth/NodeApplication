@@ -1,4 +1,4 @@
-const commandsObject = {
+const engineCommands = {
     "each": {
         closeCommand: "/each"
     },
@@ -10,4 +10,4 @@ const commandsObject = {
     }
 }
 
-export { commandsObject };
+export { engineCommands };
